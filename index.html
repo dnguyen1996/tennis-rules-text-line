@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rules Text Signup</title>
+<style>
+  :root {
+    --ground: #faf8f4;
+    --surface: #ffffff;
+    --ink: #1c2321;
+    --ink-soft: #52605a;
+    --line: #e3ddd0;
+    --accent: #1b4332;
+    --accent-soft: #e8efe9;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 20px;
+  }
+  main { max-width: 480px; margin: 0 auto; padding-block: 48px; }
+  .eyebrow {
+    font-family: Georgia, serif;
+    font-style: italic;
+    color: var(--accent);
+    font-size: 0.95rem;
+    margin: 0 0 6px;
+  }
+  h1 {
+    font-family: Georgia, serif;
+    font-size: 1.9rem;
+    font-weight: 600;
+    line-height: 1.15;
+    margin: 0 0 8px;
+  }
+  .subtitle { color: var(--ink-soft); font-size: 1rem; line-height: 1.55; margin: 0 0 28px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 26px; }
+  label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  input[type="tel"] {
+    width: 100%;
+    font: inherit;
+    font-size: 1.05rem;
+    padding: 12px 14px;
+    border-radius: 9px;
+    border: 1px solid var(--line);
+    background: var(--ground);
+    color: var(--ink);
+  }
+  .consent {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-top: 20px;
+    padding: 14px 16px;
+    background: var(--accent-soft);
+    border-radius: 10px;
+  }
+  .consent input { margin-top: 3px; accent-color: var(--accent); width: 17px; height: 17px; flex: none; }
+  .consent label { text-transform: none; font-weight: 400; font-size: 0.92rem; line-height: 1.55; color: var(--ink); letter-spacing: normal; margin: 0; }
+  .consent a { color: var(--accent); font-weight: 600; }
+  button {
+    width: 100%;
+    margin-top: 20px;
+    font: inherit;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 13px;
+    border: none;
+    border-radius: 9px;
+    background: var(--accent);
+    color: var(--ground);
+    cursor: pointer;
+  }
+  .error { color: #b4463f; font-size: 0.85rem; margin-top: 8px; min-height: 1.2em; }
+  .confirm h2 { font-family: Georgia, serif; font-size: 1.3rem; font-weight: 600; margin: 0 0 10px; }
+  .confirm p { line-height: 1.6; margin: 0 0 8px; }
+  .confirm .sms { margin-top: 16px; background: var(--accent-soft); border-radius: 10px; padding: 14px 16px; font-size: 0.95rem; line-height: 1.55; }
+  .confirm .sms b { color: var(--accent); }
+  footer { color: var(--ink-soft); font-size: 0.82rem; line-height: 1.6; margin-top: 22px; }
+  footer a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <p class="eyebrow">Tennis Rules Text Line</p>
+  <h1>Get rules answers by text</h1>
+  <p class="subtitle">
+    An automated SMS platform that answers USTA league tennis rules questions.
+    Enter your number to enroll, then text any rules question to the platform's
+    number for an automated answer.
+  </p>
+
+  <div class="card" id="formCard">
+    <form id="signupForm">
+      <label for="phone">Mobile phone number</label>
+      <input type="tel" id="phone" name="phone" placeholder="(555) 555-5555" autocomplete="tel" required>
+      <p class="error" id="phoneError"></p>
+
+      <div class="consent">
+        <input type="checkbox" id="consent" required>
+        <label for="consent">
+          I agree to receive SMS messages from Tennis Rules Text Line (operated by
+          Darrin Nguyen) about USTA league rules. Message frequency varies. Message
+          and data rates may apply. Reply <strong>STOP</strong> to opt out,
+          <strong>HELP</strong> for help. See the
+          <a href="privacy.html">Privacy Policy</a> and
+          <a href="terms.html">Terms &amp; Conditions</a>.
+        </label>
+      </div>
+
+      <button type="submit" id="submitBtn">Enroll my number</button>
+    </form>
+  </div>
+
+  <div class="card confirm" id="confirmCard" hidden>
+    <h2>You're enrolled</h2>
+    <p id="confirmText"></p>
+    <div class="sms">
+      <b>Tennis Rules Text Line:</b> You're opted in. Text a USTA league rules
+      question anytime for an automated reference answer. Msg frequency varies.
+      Msg&amp;data rates may apply. Reply STOP to opt out, HELP for help.
+    </div>
+  </div>
+
+  <footer>
+    This platform's access is limited to pre-approved phone numbers.
+    <a href="mailto:darrinnguyen2@gmail.com">darrinnguyen2@gmail.com</a>
+  </footer>
+</main>
+
+<script>
+  var form = document.getElementById('signupForm');
+  var phoneInput = document.getElementById('phone');
+  var phoneError = document.getElementById('phoneError');
+  var formCard = document.getElementById('formCard');
+  var confirmCard = document.getElementById('confirmCard');
+  var confirmText = document.getElementById('confirmText');
+
+  function digitsOnly(s) { return (s.match(/\d/g) || []).join(''); }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var digits = digitsOnly(phoneInput.value);
+    if (digits.length < 10) {
+      phoneError.textContent = 'Enter a valid 10-digit mobile number.';
+      return;
+    }
+    phoneError.textContent = '';
+    var last4 = digits.slice(-4);
+    confirmText.textContent = 'A confirmation text has been sent to the number ending in ' + last4 + '.';
+    formCard.hidden = true;
+    confirmCard.hidden = false;
+  });
+</script>
+</body>
+</html>
